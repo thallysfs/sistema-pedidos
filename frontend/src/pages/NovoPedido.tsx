@@ -61,7 +61,7 @@ export default function NovoPedido() {
       await createOrder({ customerName, items })
       navigate('/')
     } catch {
-      setError('Erro ao criar pedido. Verifique se o backend está rodando.')
+      setError('Erro ao criar pedido. Instablidade com o servidor do sistema, tente novamente mais tarde.')
     } finally {
       setSubmitting(false)
     }

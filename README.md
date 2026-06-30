@@ -1,85 +1,50 @@
 # Sistema de Pedidos — Agilean
 
-Aplicação full stack para gestão de pedidos, faturamento e criação de novos pedidos.
+Aplicação full stack para gestão de pedidos, faturamento e criação de novos pedidos, com microserviço de logística integrado via RabbitMQ.
 
-| Camada    | Tecnologia              |
-|-----------|-------------------------|
-| Backend   | .NET 10 Web API         |
-| ORM       | EF Core + Dapper        |
-| Banco     | PostgreSQL 16 (Docker)  |
-| Frontend  | React 19 + Vite + Tailwind CSS 4 |
-| Testes    | xUnit                   |
-
----
-
-## Pré-requisitos
-
-Instale antes de começar:
-
-- [Docker](https://docs.docker.com/get-docker/) e Docker Compose
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js](https://nodejs.org/) 20+ (LTS recomendado)
-- Ferramenta EF Core (para migrations):
-
-```bash
-dotnet tool install --global dotnet-ef
-```
+| Camada              | Tecnologia                        |
+|---------------------|-----------------------------------|
+| Backend             | .NET 10 Web API                   |
+| ORM                 | EF Core + Dapper                  |
+| Banco               | PostgreSQL 16                     |
+| Frontend            | React 19 + Vite + Tailwind CSS 4  |
+| Microserviço        | Node.js 20                        |
+| Mensageria          | RabbitMQ 3.13                     |
+| Testes              | xUnit                             |
 
 ---
 
-## Colocando no ar (desenvolvimento)
+## Arquitetura
 
-Abra **três terminais** na raiz do projeto (`sistema-pedidos/`).
-
-### 1. Banco de dados
-
-```bash
-docker compose up -d
+```
+Frontend → POST /orders → Backend .NET → RabbitMQ → Microserviço de Logística
+                               ↓
+                          PostgreSQL
 ```
 
-O PostgreSQL sobe na porta **5433** com:
+Quando um pedido é criado, o backend publica um evento na fila `orders.created` do RabbitMQ. O microserviço de logística consome esse evento e exibe o pedido como entrada na fila de separação.
 
-| Campo    | Valor              |
-|----------|--------------------|
-| Database | `sistema_pedidos`  |
-| Usuário  | `postgres`         |
-| Senha    | `postgres`         |
+---
 
-Verifique se o container está rodando:
+## Subindo tudo com Docker (recomendado)
+
+Com um único comando você sobe o banco, RabbitMQ, backend e microserviço de logística:
 
 ```bash
-docker compose ps
+docker compose up --build
 ```
 
-### 2. Backend (API)
+Serviços que sobem:
 
-```bash
-cd backend/SistemaPedidos.API
+| Serviço             | Porta local | Descrição                          |
+|---------------------|-------------|------------------------------------|
+| PostgreSQL          | 5433        | Banco de dados                     |
+| RabbitMQ (AMQP)     | 5672        | Mensageria                         |
+| RabbitMQ (UI)       | 15672       | Painel de administração            |
+| Backend API         | 5133        | API REST .NET                      |
+| Logistics Service   | —           | Microserviço Node.js (sem porta exposta) |
 
-# Cria as tabelas no banco (necessário na primeira execução)
-dotnet ef database update
-
-# Sobe a API na porta 5133 (mesma porta usada pelo proxy do frontend)
-ASPNETCORE_URLS=http://localhost:5133 dotnet run
-```
-
-Na primeira execução, a API popula o banco com **5.000 pedidos** de exemplo automaticamente.
-
-Endpoints principais:
-
-| Método | Rota                    | Descrição                    |
-|--------|-------------------------|------------------------------|
-| GET    | `/orders?page=&pageSize=` | Listar pedidos paginados   |
-| POST   | `/orders`               | Criar pedido                 |
-| GET    | `/orders/billing?from=&to=` | Faturamento por período |
-
-Teste rápido:
-
-```bash
-curl "http://localhost:5133/orders?page=1&pageSize=5"
-```
-
-### 3. Frontend
+Depois suba o frontend separadamente (dev server):
 
 ```bash
 cd frontend
@@ -89,16 +54,102 @@ npm run dev
 
 Acesse: **http://localhost:5173/**
 
-O Vite faz proxy das chamadas `/orders` para `http://localhost:5133` — por isso a API precisa estar rodando nessa porta.
+### Painel do RabbitMQ
+
+Acesse **http://localhost:15672** com usuário `guest` e senha `guest` para monitorar filas e mensagens.
+
+### Logs do microserviço de logística
+
+```bash
+docker compose logs logistics-service -f
+```
+
+Ao criar um pedido, o terminal exibe:
+
+```
+──────────────────────────────────────────────────────────
+  [14:32:01] 🆕 NOVO PEDIDO #C849A543
+  Cliente : João Silva
+  Itens   : 2x Webcam HD, 1x Headset
+  Total   : R$ 750,98
+  Status  : Aguardando separação
+──────────────────────────────────────────────────────────
+
+  → Pedido #C849A543 movido para separação
+```
+
+---
+
+## Colocando no ar (desenvolvimento sem Docker)
+
+Útil para iterar mais rápido no backend sem rebuildar a imagem.
+
+Abra **três terminais** na raiz do projeto.
+
+**Pré-requisitos:**
+- [Docker](https://docs.docker.com/get-docker/) e Docker Compose
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Node.js](https://nodejs.org/) 20+
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+### 1. Infraestrutura (banco + RabbitMQ)
+
+```bash
+docker compose up -d postgres rabbitmq
+```
+
+### 2. Backend (API)
+
+```bash
+cd backend/SistemaPedidos.API
+dotnet run
+```
+
+A API sobe na porta **5133**. Na primeira execução popula o banco com **5.000 pedidos** de exemplo.
+
+Endpoints principais:
+
+| Método | Rota                          | Descrição                    |
+|--------|-------------------------------|------------------------------|
+| GET    | `/orders?page=&pageSize=`     | Listar pedidos paginados     |
+| POST   | `/orders`                     | Criar pedido                 |
+| GET    | `/orders/billing?from=&to=`   | Faturamento por período      |
+
+### 3. Microserviço de logística
+
+```bash
+cd microservice
+npm install
+npm start
+```
+
+### 4. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Acesse: **http://localhost:5173/**
 
 ---
 
 ## Ordem de subida (resumo)
 
 ```
-1. docker compose up -d
-2. dotnet ef database update  →  dotnet run  (porta 5133)
-3. npm install  →  npm run dev  (porta 5173)
+# Com Docker (tudo junto):
+docker compose up --build
+cd frontend && npm run dev
+
+# Sem Docker (desenvolvimento):
+docker compose up -d postgres rabbitmq
+dotnet run          (backend/SistemaPedidos.API/)
+npm start           (microservice/)
+npm run dev         (frontend/)
 ```
 
 ---
@@ -112,39 +163,65 @@ dotnet test
 
 ---
 
-## Build de produção (frontend)
-
-```bash
-cd frontend
-npm run build
-```
-
-Os arquivos estáticos ficam em `frontend/dist/`. Sirva com Nginx, Caddy ou outro servidor de arquivos estáticos.
-
-Para testar o build localmente:
-
-```bash
-npm run preview
-```
-
-> Em produção, configure o servidor web para encaminhar `/orders` para a API, ou ajuste a `baseURL` em `frontend/src/api/orders.ts`.
-
----
-
 ## Estrutura do projeto
 
 ```
 sistema-pedidos/
-├── backend/SistemaPedidos.API/   # API .NET
-├── frontend/                     # React + Vite
+├── backend/SistemaPedidos.API/   # API REST .NET 10
+├── frontend/                     # React 19 + Vite
+├── microservice/                 # Microserviço Node.js (logística)
+│   ├── src/index.js              # Consumer RabbitMQ + painel terminal
+│   └── Dockerfile
 ├── tests/SistemaPedidos.Tests/   # Testes xUnit
-├── docker-compose.yml            # PostgreSQL
+├── docker-compose.yml            # Toda a infraestrutura
 └── requests.http                 # Exemplos de requisições HTTP
 ```
 
 ---
 
+## Microserviço de logística — desenho da solução
+
+**Problema:** ao criar um pedido, o setor de logística precisa ser notificado para iniciar a separação dos itens.
+
+**Decisão:** comunicação assíncrona via RabbitMQ (exchange `orders`, tipo `direct`, fila `orders.created`).
+
+**Fluxo:**
+1. `POST /orders` salva o pedido no PostgreSQL
+2. O backend publica um evento JSON na fila com os dados do pedido
+3. O microserviço Node.js consome o evento e exibe o pedido no terminal como entrada na fila de separação
+4. Após 5 segundos simula a movimentação para "em separação"
+
+**Por que RabbitMQ e não HTTP síncrono?**
+- O backend não precisa aguardar o microserviço responder — a criação do pedido não falha se a logística estiver fora
+- O microserviço pode reiniciar e reprocessar mensagens pendentes (fila durável)
+- Desacoplamento total: qualquer serviço pode consumir o mesmo evento no futuro
+
+**Resiliência:** se o RabbitMQ estiver indisponível na inicialização do backend, um `NullPublisher` é usado como fallback — a API continua funcionando sem publicar eventos. O microserviço implementa retry automático com até 10 tentativas e reconexão automática em caso de queda.
+
+---
+
+## Parar o sistema
+
+```bash
+# Parar tudo (mantém os dados)
+docker compose down
+
+# Parar tudo e apagar os dados do banco
+docker compose down -v
+```
+
+---
+
 ## Problemas comuns
+
+### Backend não conecta ao RabbitMQ
+
+Confirme que o RabbitMQ está saudável:
+
+```bash
+docker compose ps
+docker compose logs rabbitmq
+```
 
 ### `ECONNREFUSED` na porta 5133
 
@@ -155,7 +232,7 @@ A API não está rodando. Suba o backend antes do frontend.
 O proxy do Vite não consegue falar com a API. Confirme:
 
 ```bash
-curl http://localhost:5133/orders?page=1&pageSize=1
+curl "http://localhost:5133/orders?page=1&pageSize=1"
 ```
 
 ### `dotnet ef` não encontrado
@@ -167,43 +244,14 @@ export PATH="$PATH:$HOME/.dotnet/tools"
 
 ### Porta 5173 já em uso
 
-Outro processo Vite pode estar ocupando a porta. Encerre instâncias antigas:
-
 ```bash
 pkill -f "node.*vite"
 cd frontend && npm run dev
 ```
 
-### `ENOENT: uv_cwd` ao rodar `npm`
-
-O terminal perdeu referência ao diretório. Abra um terminal novo e entre novamente em `frontend/`:
-
-```bash
-cd "/caminho/para/sistema-pedidos/frontend"
-npm run dev
-```
-
 ### Erro de conexão com o banco
 
-Confirme que o Docker está ativo e o Postgres responde na porta **5433**:
-
 ```bash
-docker compose up -d
+docker compose up -d postgres
 docker compose logs postgres
-```
-
-A connection string padrão está em `backend/SistemaPedidos.API/appsettings.json`.
-
----
-
-## Parar o sistema
-
-```bash
-# Parar API e frontend: Ctrl+C nos terminais
-
-# Parar o banco (mantém os dados)
-docker compose down
-
-# Parar o banco e apagar os dados
-docker compose down -v
 ```
