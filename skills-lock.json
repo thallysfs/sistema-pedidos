@@ -13,6 +13,12 @@
       "skillPath": ".claude/skills/dotnet-10-csharp-14/SKILL.md",
       "computedHash": "ca37c4d43a084c0bd17efb57103b49e50e48b9a17326a42be28d5c3bb3da60ff"
     },
+    "rabbitmq-development": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "rabbitmq-development/SKILL.md",
+      "computedHash": "5696250d6eb09665ce24ee60d6528f0cd0492c7341a708d0ac2937c307b37a12"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
