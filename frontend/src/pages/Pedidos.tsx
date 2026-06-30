@@ -106,7 +106,7 @@ export default function Pedidos() {
             {data ? formatCurrency(totalFaturamento) : '—'}
           </div>
           <div className="text-xs font-semibold tracking-widest text-gray-400 uppercase mt-1">
-            Faturamento
+            Subtotal da página
           </div>
         </div>
       </div>

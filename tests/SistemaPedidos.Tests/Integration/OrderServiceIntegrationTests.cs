@@ -12,7 +12,7 @@ public class OrderServiceIntegrationTests(PostgreSqlFixture fixture)
     public async Task InitializeAsync()
     {
         _context = fixture.CreateContext();
-        _service = new OrderService(_context);
+        _service = new OrderService(_context, new API.Services.NullOrderEventPublisher());
 
         // Limpa entre testes para garantir isolamento
         _context.OrderItems.RemoveRange(_context.OrderItems);
