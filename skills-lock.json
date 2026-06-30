@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "docker-expert": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/docker-expert/SKILL.md",
+      "computedHash": "0974b5f64fcd284c1bd662810e2388f7beb9be6784c597de4d0ad4213ccbd6af"
+    },
+    "dotnet-10-csharp-14": {
+      "source": "mhagrelius/dotfiles",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/dotnet-10-csharp-14/SKILL.md",
+      "computedHash": "ca37c4d43a084c0bd17efb57103b49e50e48b9a17326a42be28d5c3bb3da60ff"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "ca7b0c0c6e5f2750043f7f0cd72d16ac4e2abc48f9b5500d047a4b77a2506212"
+    }
+  }
+}

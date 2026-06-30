@@ -1,0 +1,57 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!**/packages/build/
+*.nuspec
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# Node / React
+node_modules/
+dist/
+.env
+.env.local
+.env.production
+
+# Docker
+.dockerignore
+
+# AI agents
+.agents/
+
+# OS
+.DS_Store
+Thumbs.db
