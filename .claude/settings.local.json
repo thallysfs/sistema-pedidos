@@ -15,7 +15,9 @@
       "Bash(curl -s \"http://localhost:5133/orders/billing?from=2025-01-01&to=2025-01-07\")",
       "Bash(curl -sv \"http://localhost:5133/orders/billing?from=2025-01-01&to=2025-01-07\")",
       "Bash(python3 -c \"import sys; print\\(sys.stdin.read\\(\\)[:500]\\)\")",
-      "Bash(pkill -f \"SistemaPedidos.API\")"
+      "Bash(pkill -f \"SistemaPedidos.API\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:5000/orders?page=1\")",
+      "Bash(curl -s \"http://localhost:5000/orders/billing?from=2026-05-31&to=2026-06-30\")"
     ]
   }
 }
