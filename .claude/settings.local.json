@@ -5,7 +5,17 @@
       "Bash(dotnet add *)",
       "Bash(docker compose *)",
       "Bash(dotnet tool *)",
-      "Bash(docker exec *)"
+      "Bash(docker exec *)",
+      "Bash(pkill -f \"dotnet run\")",
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(dotnet run *)",
+      "Bash(curl -s \"http://localhost:5133/orders?page=1&pageSize=3\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"http://localhost:5133/orders/billing?from=2025-01-01&to=2025-01-07\")",
+      "Bash(curl -sv \"http://localhost:5133/orders/billing?from=2025-01-01&to=2025-01-07\")",
+      "Bash(python3 -c \"import sys; print\\(sys.stdin.read\\(\\)[:500]\\)\")",
+      "Bash(pkill -f \"SistemaPedidos.API\")"
     ]
   }
 }

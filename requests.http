@@ -1,0 +1,93 @@
+@baseUrl = http://localhost:5133
+
+### Listar pedidos (página 1, 20 por página)
+GET {{baseUrl}}/orders?page=1&pageSize=20
+
+### Listar pedidos (página 2)
+GET {{baseUrl}}/orders?page=2&pageSize=20
+
+### Listar pedidos (pageSize pequeno para testar paginação)
+GET {{baseUrl}}/orders?page=1&pageSize=5
+
+### Faturamento por período (semana)
+GET {{baseUrl}}/orders/billing?from=2025-01-01&to=2025-01-07
+
+### Faturamento por período (mês inteiro)
+GET {{baseUrl}}/orders/billing?from=2025-06-01&to=2025-06-30
+
+### Faturamento — erro: data inicial maior que final
+GET {{baseUrl}}/orders/billing?from=2025-12-31&to=2025-01-01
+
+### Criar pedido (válido)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerName": "Maria Silva",
+  "items": [
+    {
+      "productName": "Notebook Dell Inspiron 15",
+      "quantity": 1,
+      "unitPrice": 2999.90
+    },
+    {
+      "productName": "Mouse Logitech MX Master",
+      "quantity": 2,
+      "unitPrice": 150.00
+    }
+  ]
+}
+
+### Criar pedido — erro: sem itens
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerName": "João Santos",
+  "items": []
+}
+
+### Criar pedido — erro: nome do cliente vazio
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerName": "",
+  "items": [
+    {
+      "productName": "Teclado Mecânico",
+      "quantity": 1,
+      "unitPrice": 250.00
+    }
+  ]
+}
+
+### Criar pedido — erro: quantidade inválida
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerName": "Ana Oliveira",
+  "items": [
+    {
+      "productName": "SSD Samsung 1TB",
+      "quantity": 0,
+      "unitPrice": 399.90
+    }
+  ]
+}
+
+### Criar pedido — erro: preço inválido
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerName": "Pedro Costa",
+  "items": [
+    {
+      "productName": "Headset HyperX",
+      "quantity": 1,
+      "unitPrice": -50.00
+    }
+  ]
+}
