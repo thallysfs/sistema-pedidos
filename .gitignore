@@ -49,7 +49,7 @@ dist/
 # Docker
 .dockerignore
 
-# AI agents
+# AI agents (ignorado pelo git, acessível para ferramentas de IA localmente)
 .agents/
 
 # OS
