@@ -6,7 +6,7 @@ using SistemaPedidos.API.Models;
 
 namespace SistemaPedidos.API.Services;
 
-public class OrderService(AppDbContext context)
+public class OrderService(AppDbContext context, IOrderEventPublisher eventPublisher)
 {
     public async Task<PagedResponse<OrderResponse>> GetOrdersAsync(int page, int pageSize)
     {
@@ -80,7 +80,12 @@ public class OrderService(AppDbContext context)
         context.Orders.Add(order);
         await context.SaveChangesAsync();
 
-        return MapToResponse(order);
+        var response = MapToResponse(order);
+
+        try { await eventPublisher.PublishOrderCreatedAsync(response); }
+        catch (Exception ex) { Console.Error.WriteLine($"[RabbitMQ] Falha ao publicar evento: {ex.Message}"); }
+
+        return response;
     }
 
     public static decimal CalculateTotal(IEnumerable<OrderItem> items) =>

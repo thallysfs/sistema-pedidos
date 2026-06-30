@@ -7,7 +7,8 @@
       "Bash(npm create *)",
       "Bash(npx create-vite@latest --template react-ts .)",
       "Bash(npm init *)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(dotnet add *)"
     ]
   }
 }

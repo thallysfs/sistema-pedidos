@@ -4,6 +4,19 @@ using SistemaPedidos.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+IOrderEventPublisher orderEventPublisher;
+try
+{
+    orderEventPublisher = await RabbitMqPublisher.CreateAsync(builder.Configuration);
+    Console.WriteLine("[RabbitMQ] Conexão estabelecida com sucesso.");
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"[RabbitMQ] Indisponível, eventos não serão publicados: {ex.Message}");
+    orderEventPublisher = new NullOrderEventPublisher();
+}
+builder.Services.AddSingleton<IOrderEventPublisher>(_ => orderEventPublisher);
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
