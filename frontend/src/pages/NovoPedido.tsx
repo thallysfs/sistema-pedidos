@@ -70,18 +70,18 @@ export default function NovoPedido() {
   const orderTotal = items.reduce((acc, i) => acc + i.quantity * i.unitPrice, 0)
 
   return (
-    <div className="flex-1 bg-[#eef0f4] min-h-screen p-8">
+    <div className="flex-1 bg-[#eef0f4] min-h-screen p-4 lg:p-8">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => navigate('/')}
-          className="w-8 h-8 flex items-center justify-center rounded-lg bg-white shadow-sm text-gray-500 hover:text-gray-900 transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-white shadow-sm text-gray-500 hover:text-gray-900 transition-colors shrink-0"
         >
           ←
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Novo Pedido ➕</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Preencha os dados e adicione os produtos</p>
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Novo Pedido ➕</h1>
+          <p className="text-sm text-gray-500 mt-0.5 hidden sm:block">Preencha os dados e adicione os produtos</p>
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export default function NovoPedido() {
             <h2 className="font-semibold text-gray-900">Adicionar Produto</h2>
           </div>
 
-          <div className="grid grid-cols-[1fr_100px_120px] gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_100px_120px] gap-3 mb-4">
             <div>
               <label className="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2">
                 Produto

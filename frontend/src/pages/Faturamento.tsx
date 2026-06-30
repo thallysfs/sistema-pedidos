@@ -55,38 +55,38 @@ export default function Faturamento() {
   }))
 
   return (
-    <div className="flex-1 bg-[#eef0f4] min-h-screen p-8">
+    <div className="flex-1 bg-[#eef0f4] min-h-screen p-4 lg:p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Faturamento 📊</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Faturamento 📊</h1>
+          <p className="text-sm text-gray-500 mt-0.5 hidden sm:block">
             Receita por período · pedidos cancelados excluídos
           </p>
         </div>
 
         {/* Date range */}
-        <div className="flex items-center gap-2 bg-white rounded-xl shadow-sm px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-2 bg-white rounded-xl shadow-sm px-4 py-2.5 self-start">
           <span className="text-sm text-gray-500">De</span>
           <input
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="text-sm text-gray-900 focus:outline-none"
+            className="text-sm text-gray-900 focus:outline-none min-w-0"
           />
           <span className="text-sm text-gray-500">até</span>
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="text-sm text-gray-900 focus:outline-none"
+            className="text-sm text-gray-900 focus:outline-none min-w-0"
           />
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="rounded-2xl p-6 text-white bg-gradient-to-br from-indigo-500 to-violet-500">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4 mb-6">
+        <div className="rounded-2xl p-5 lg:p-6 text-white bg-gradient-to-br from-indigo-500 to-violet-500">
           <div className="text-3xl mb-2">💰</div>
           <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
           <div className="text-xs font-semibold tracking-widest uppercase mt-1 opacity-80">
@@ -94,7 +94,7 @@ export default function Faturamento() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-6 text-white bg-gradient-to-br from-violet-500 to-purple-600">
+        <div className="rounded-2xl p-5 lg:p-6 text-white bg-gradient-to-br from-violet-500 to-purple-600">
           <div className="text-3xl mb-2">📦</div>
           <div className="text-2xl font-bold">{orderCount}</div>
           <div className="text-xs font-semibold tracking-widest uppercase mt-1 opacity-80">
@@ -102,7 +102,7 @@ export default function Faturamento() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-6 text-white bg-gradient-to-br from-pink-500 to-rose-500">
+        <div className="rounded-2xl p-5 lg:p-6 text-white bg-gradient-to-br from-pink-500 to-rose-500">
           <div className="text-3xl mb-2">🎯</div>
           <div className="text-2xl font-bold">{formatCurrency(averageTicket)}</div>
           <div className="text-xs font-semibold tracking-widest uppercase mt-1 opacity-80">

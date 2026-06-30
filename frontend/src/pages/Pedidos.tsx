@@ -76,23 +76,23 @@ export default function Pedidos() {
   const paginationItems = getPaginationItems(totalPages)
 
   return (
-    <div className="flex-1 bg-[#eef0f4] min-h-screen p-8">
+    <div className="flex-1 bg-[#eef0f4] min-h-screen p-4 lg:p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pedidos 📦</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Gerencie e acompanhe todos os pedidos</p>
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Pedidos 📦</h1>
+          <p className="text-sm text-gray-500 mt-0.5 hidden sm:block">Gerencie e acompanhe todos os pedidos</p>
         </div>
         <button
           onClick={() => navigate('/novo-pedido')}
-          className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors"
+          className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 lg:px-5 lg:py-2.5 rounded-full text-sm font-semibold transition-colors"
         >
-          + Novo Pedido
+          + <span className="hidden sm:inline">Novo Pedido</span><span className="sm:hidden">Novo</span>
         </button>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <div className="text-3xl mb-2">📦</div>
           <div className="text-3xl font-bold text-gray-900">{data?.totalCount ?? '—'}</div>
@@ -122,26 +122,26 @@ export default function Pedidos() {
           )}
         </div>
 
-        <div className="px-6">
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-t border-gray-100">
-                <th className="text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">
+                <th className="text-left py-3 px-4 lg:px-6 text-xs font-semibold tracking-wide text-gray-400 uppercase whitespace-nowrap">
                   Pedido
                 </th>
                 <th className="text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase">
                   Cliente
                 </th>
-                <th className="text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase w-16">
+                <th className="hidden md:table-cell text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase whitespace-nowrap">
                   Itens
                 </th>
-                <th className="text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">
+                <th className="hidden sm:table-cell text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase whitespace-nowrap">
                   Data
                 </th>
-                <th className="text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">
+                <th className="hidden lg:table-cell text-left py-3 pr-4 text-xs font-semibold tracking-wide text-gray-400 uppercase whitespace-nowrap">
                   Status
                 </th>
-                <th className="text-right py-3 text-xs font-semibold tracking-wide text-gray-400 uppercase w-32">
+                <th className="text-right py-3 px-4 lg:px-6 text-xs font-semibold tracking-wide text-gray-400 uppercase whitespace-nowrap">
                   Total
                 </th>
               </tr>
@@ -164,18 +164,18 @@ export default function Pedidos() {
               ) : (
                 data?.data.map((order) => (
                   <tr key={order.id} className="border-t border-gray-50 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 pr-4 font-mono text-xs text-gray-500">
+                    <td className="py-3 px-4 lg:px-6 font-mono text-xs text-gray-500 whitespace-nowrap">
                       #{order.id.slice(0, 8)}
                     </td>
-                    <td className="py-3 pr-4 font-medium text-gray-900 max-w-0 truncate">
+                    <td className="py-3 pr-4 font-medium text-gray-900 max-w-[120px] sm:max-w-none truncate">
                       {order.customerName}
                     </td>
-                    <td className="py-3 pr-4 text-gray-600">{order.items.length}</td>
-                    <td className="py-3 pr-4 text-gray-600">{formatDate(order.createdAt)}</td>
-                    <td className="py-3 pr-4">
+                    <td className="hidden md:table-cell py-3 pr-4 text-gray-600">{order.items.length}</td>
+                    <td className="hidden sm:table-cell py-3 pr-4 text-gray-600 whitespace-nowrap">{formatDate(order.createdAt)}</td>
+                    <td className="hidden lg:table-cell py-3 pr-4">
                       <StatusBadge total={order.total} />
                     </td>
-                    <td className="py-3 text-right font-semibold text-gray-900">
+                    <td className="py-3 px-4 lg:px-6 text-right font-semibold text-gray-900 whitespace-nowrap">
                       {formatCurrency(order.total)}
                     </td>
                   </tr>
