@@ -21,6 +21,9 @@ public class OrdersController(OrderService orderService) : ControllerBase
     [HttpGet("billing")]
     public async Task<IActionResult> GetBilling([FromQuery] DateOnly from, [FromQuery] DateOnly to)
     {
+        if (from == DateOnly.MinValue || to == DateOnly.MinValue)
+            return BadRequest("Os parâmetros 'from' e 'to' são obrigatórios.");
+
         if (from > to)
             return BadRequest("A data inicial deve ser anterior à data final.");
 
@@ -34,7 +37,7 @@ public class OrdersController(OrderService orderService) : ControllerBase
         try
         {
             var result = await orderService.CreateOrderAsync(request);
-            return CreatedAtAction(nameof(GetOrders), new { }, result);
+            return Created($"/orders/{result.Id}", result);
         }
         catch (ArgumentException ex)
         {

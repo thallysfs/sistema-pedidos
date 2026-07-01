@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using SistemaPedidos.API.Models;
 using SistemaPedidos.API.Services;
 
@@ -12,7 +13,7 @@ public class OrderServiceIntegrationTests(PostgreSqlFixture fixture)
     public async Task InitializeAsync()
     {
         _context = fixture.CreateContext();
-        _service = new OrderService(_context, new API.Services.NullOrderEventPublisher());
+        _service = new OrderService(_context, new API.Services.NullOrderEventPublisher(), NullLogger<OrderService>.Instance);
 
         // Limpa entre testes para garantir isolamento
         _context.OrderItems.RemoveRange(_context.OrderItems);

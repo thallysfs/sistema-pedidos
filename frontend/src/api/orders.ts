@@ -49,8 +49,8 @@ export interface CreateOrderRequest {
   items: CreateOrderItemRequest[]
 }
 
-export const getOrders = (page: number, pageSize = 10) =>
-  api.get<PagedResponse<OrderResponse>>('', { params: { page, pageSize } }).then(r => r.data)
+export const getOrders = (page: number, pageSize = 10, signal?: AbortSignal) =>
+  api.get<PagedResponse<OrderResponse>>('', { params: { page, pageSize }, signal }).then(r => r.data)
 
 export const getBilling = (from: string, to: string) =>
   api.get<BillingByDayResponse[]>('/billing', { params: { from, to } }).then(r => r.data)

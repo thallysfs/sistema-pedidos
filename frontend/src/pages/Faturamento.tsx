@@ -37,11 +37,19 @@ export default function Faturamento() {
   const [to, setTo] = useState(toInputDate(today))
   const [data, setData] = useState<BillingByDayResponse[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (from > to) {
+      setError('A data inicial deve ser anterior à data final.')
+      setLoading(false)
+      return
+    }
+    setError(null)
     setLoading(true)
     getBilling(toApiDate(from), toApiDate(to))
       .then(setData)
+      .catch(() => setError('Erro ao carregar dados de faturamento.'))
       .finally(() => setLoading(false))
   }, [from, to])
 
@@ -56,6 +64,11 @@ export default function Faturamento() {
 
   return (
     <div className="flex-1 bg-[#eef0f4] min-h-screen p-4 lg:p-8">
+      {error && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+          {error}
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>

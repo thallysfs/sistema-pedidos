@@ -152,6 +152,7 @@ export default function NovoPedido() {
                 value={unitPrice === 0 ? '' : unitPrice}
                 placeholder="0,00"
                 onChange={(e) => setUnitPrice(Number(e.target.value))}
+                onKeyDown={(e) => { if (e.key === 'Enter') addItem() }}
                 className="w-full border border-gray-200 rounded-xl px-3 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
               />
             </div>

@@ -65,10 +65,13 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const controller = new AbortController()
     setLoading(true)
-    getOrders(page, PAGE_SIZE)
+    getOrders(page, PAGE_SIZE, controller.signal)
       .then(setData)
+      .catch((err) => { if (err.code !== 'ERR_CANCELED') console.error(err) })
       .finally(() => setLoading(false))
+    return () => controller.abort()
   }, [page])
 
   const totalFaturamento = data?.data.reduce((acc, o) => acc + o.total, 0) ?? 0

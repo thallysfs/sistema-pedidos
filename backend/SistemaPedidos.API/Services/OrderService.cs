@@ -6,7 +6,7 @@ using SistemaPedidos.API.Models;
 
 namespace SistemaPedidos.API.Services;
 
-public class OrderService(AppDbContext context, IOrderEventPublisher eventPublisher)
+public class OrderService(AppDbContext context, IOrderEventPublisher eventPublisher, ILogger<OrderService> logger)
 {
     public async Task<PagedResponse<OrderResponse>> GetOrdersAsync(int page, int pageSize)
     {
@@ -83,7 +83,7 @@ public class OrderService(AppDbContext context, IOrderEventPublisher eventPublis
         var response = MapToResponse(order);
 
         try { await eventPublisher.PublishOrderCreatedAsync(response); }
-        catch (Exception ex) { Console.Error.WriteLine($"[RabbitMQ] Falha ao publicar evento: {ex.Message}"); }
+        catch (Exception ex) { logger.LogError(ex, "[RabbitMQ] Falha ao publicar evento para o pedido {OrderId}", response.Id); }
 
         return response;
     }
@@ -96,10 +96,16 @@ public class OrderService(AppDbContext context, IOrderEventPublisher eventPublis
         if (string.IsNullOrWhiteSpace(request.CustomerName))
             throw new ArgumentException("Nome do cliente é obrigatório.");
 
+        if (request.CustomerName.Length > 200)
+            throw new ArgumentException("Nome do cliente não pode exceder 200 caracteres.");
+
         var items = request.Items?.ToList() ?? [];
 
         if (items.Count == 0)
             throw new ArgumentException("O pedido deve conter pelo menos um item.");
+
+        if (items.Count > 100)
+            throw new ArgumentException("O pedido não pode conter mais de 100 itens.");
 
         foreach (var item in items)
         {

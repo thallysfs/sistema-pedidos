@@ -124,10 +124,11 @@ async function run() {
         try {
           const order = JSON.parse(msg.content.toString());
           onOrderReceived(order);
+          channel.ack(msg);
         } catch (err) {
           console.error(chalk.red(`[Mensagem] Erro ao processar: ${err.message}`));
+          channel.nack(msg, false, false);
         }
-        channel.ack(msg);
       });
 
       console.log(chalk.green.bold('[RabbitMQ] Conexão estabelecida. Aguardando pedidos...'));

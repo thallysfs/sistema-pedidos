@@ -4,15 +4,18 @@ using SistemaPedidos.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+using var startupLoggerFactory = LoggerFactory.Create(b => b.AddConsole());
+var startupLogger = startupLoggerFactory.CreateLogger("Startup");
+
 IOrderEventPublisher orderEventPublisher;
 try
 {
     orderEventPublisher = await RabbitMqPublisher.CreateAsync(builder.Configuration);
-    Console.WriteLine("[RabbitMQ] Conexão estabelecida com sucesso.");
+    startupLogger.LogInformation("[RabbitMQ] Conexão estabelecida com sucesso.");
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine($"[RabbitMQ] Indisponível, eventos não serão publicados: {ex.Message}");
+    startupLogger.LogWarning(ex, "[RabbitMQ] Indisponível, eventos não serão publicados.");
     orderEventPublisher = new NullOrderEventPublisher();
 }
 builder.Services.AddSingleton<IOrderEventPublisher>(_ => orderEventPublisher);
